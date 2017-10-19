@@ -5,7 +5,7 @@ import pandas as pd
 
 # Importing the dataset
 train_ds = pd.read_csv('dataset/train.csv')
-test_ds = pd.read_csv('dataset/test.csv')
+#test_ds = pd.read_csv('dataset/test.csv')
 
 X = train_ds.iloc[:, 2:58].values
 y = train_ds.iloc[:, 1].values
@@ -20,14 +20,13 @@ sc = StandardScaler()
 X_train = sc.fit_transform(X_train)
 X_test = sc.transform(X_test)
 
-X_train.shape
-X_test.shape
 
-# Applying Kernel PCA
-from sklearn.decomposition import KernelPCA
-kpca = KernelPCA(n_components = 2, kernel = 'rbf')
-X_train = kpca.fit_transform(X_train)
-X_test = kpca.transform(X_test)
+# Applying PCA
+from sklearn.decomposition import PCA
+pca = PCA(n_components = 2)
+X_train = pca.fit_transform(X_train)
+X_test = pca.transform(X_test)
+explained_variance = pca.explained_variance_ratio_
 
 
 X_train.shape
@@ -44,7 +43,7 @@ from keras.layers import Dense
 classifier = Sequential()
 
 # Adding the input layer and the first hidden layer
-classifier.add(Dense(activation="relu", input_dim=56, units=6, kernel_initializer="uniform"))
+classifier.add(Dense(activation="relu", input_dim=2, units=6, kernel_initializer="uniform"))
 
 # Adding the second hidden layer
 classifier.add(Dense(activation="relu", units=6, kernel_initializer="uniform"))
@@ -56,7 +55,7 @@ classifier.add(Dense(activation="sigmoid", units=1, kernel_initializer="uniform"
 classifier.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
 
 # Fitting the ANN to the Training set
-classifier.fit(X_train, y_train, batch_size = 10, epochs = 100)
+classifier.fit(X_train, y_train, batch_size = 10, epochs = 5)
 
 
 
